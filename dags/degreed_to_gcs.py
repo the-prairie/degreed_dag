@@ -11,7 +11,7 @@ from operators.degreed_to_gcs import DegreedToCloudStorageOperator
 DEGREED_CONN_ID = 'degreed_conn_id'
 DEGREED_SCHEMA = ''
 BIGQUERY_SCHEMA = 'degreed'
-BIGQUERY_CONN_ID = 'my_gcp_connection'
+BIGQUERY_CONN_ID = 'google_cloud_default'
 GCS_CONN_ID = 'google_cloud_default'
 GCS_BUCKET = 'degreed_data/logins'
 
