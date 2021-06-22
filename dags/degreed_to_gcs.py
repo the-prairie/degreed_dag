@@ -88,6 +88,7 @@ def create_dag(dag_id,
         "dataset_id": "degreed",
         "project_id": "its-my-data-pipeline",
         "gcp_conn_id": "google_cloud_default",
+        "degreed_conn_id": "degreed_conn_id"
     }
 
     with dag:
