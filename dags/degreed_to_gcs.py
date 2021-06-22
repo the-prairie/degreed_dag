@@ -6,7 +6,7 @@ from airflow.contrib.operators.bigquery_operator import BigQueryGetDatasetOperat
 from airflow.operators.dummy_operator import DummyOperator
 
 
-from operators.degreed_to_gcs import DegreedToCloudStorageOperator
+from degreed_to_gcs import DegreedToCloudStorageOperator
 
 DEGREED_CONN_ID = 'degreed_conn_id'
 DEGREED_SCHEMA = ''
