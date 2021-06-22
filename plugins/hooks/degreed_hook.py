@@ -20,8 +20,8 @@ class DegreedHook(HttpHook):
 
         if endpoint == 'degreed.com/oauth/token':
             data = {"grant_type": "client_credentials",
-                    "client_id": self.CLIENT_ID,
-                    "client_secret": self.CLIENT_SECRET,
+                    "client_id": f"{self.CLIENT_ID}",
+                    "client_secret": f"{self.CLIENT_SECRET}",
                     "scope": "users:read logins:read pathways:read completions:read views:read required-learning:read"
                     }
             method = 'POST'
