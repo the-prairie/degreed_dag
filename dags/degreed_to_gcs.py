@@ -8,7 +8,7 @@ from airflow.operators.dummy_operator import DummyOperator
 
 from operators.degreed_to_gcs_operator import DegreedToCloudStorageOperator
 
-DEGREED_CONN_ID = 'degreed_conn_id'
+DEGREED_CONN_ID = 'degreed_default'
 DEGREED_SCHEMA = ''
 BIGQUERY_SCHEMA = 'degreed'
 BIGQUERY_CONN_ID = 'google_cloud_default'
@@ -88,7 +88,7 @@ def create_dag(dag_id,
         "dataset_id": "degreed",
         "project_id": "its-my-data-pipeline",
         "gcp_conn_id": "google_cloud_default",
-        "degreed_conn_id": "degreed_conn_id"
+        "degreed_conn_id": "degreed_default"
     }
 
     with dag:

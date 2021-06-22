@@ -4,7 +4,7 @@ class DegreedHook(HttpHook):
     """
      Add OAuth support to the basic HttpHook
      """
-    def __init__(self, method='POST', http_conn_id='http_default'):
+    def __init__(self, method='POST', http_conn_id='degreed_default'):
         self.connection = self.get_connection(http_conn_id)
         self.CLIENT_ID = self.connection.extra_dejson.get('client_id')
         self.CLIENT_SECRET = self.connection.extra_dejson.get('client_secret')
