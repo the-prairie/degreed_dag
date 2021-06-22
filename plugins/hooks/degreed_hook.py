@@ -24,9 +24,11 @@ class DegreedHook(HttpHook):
                     "client_secret": "{0}".format(self.CLIENT_SECRET),
                     "scope": "users:read logins:read pathways:read completions:read views:read required-learning:read"
                     }
+            method = 'POST'
         else:
             headers = {"Authorization": "Bearer {0}".format(token),
                        "Content-Type": "application/json"}
+            method = 'GET'
         return super().run(endpoint, data, headers, extra_options)
 
 
