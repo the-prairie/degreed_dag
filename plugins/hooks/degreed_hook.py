@@ -6,7 +6,7 @@ class DegreedHook(HttpHook):
      """
     def __init__(self, method='POST', http_conn_id='degreed_default'):
         self.connection = self.get_connection(http_conn_id)
-        self.base_url = '{}://{}'.format(connection.sharem, connection.host)
+        self.extra_options['verify'] = True        
         self.CLIENT_ID = self.connection.extra_dejson.get('client_id')
         self.CLIENT_SECRET = self.connection.extra_dejson.get('client_secret')
         super().__init__(method, http_conn_id)
