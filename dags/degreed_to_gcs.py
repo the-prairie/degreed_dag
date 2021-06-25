@@ -135,9 +135,10 @@ globals()[daily_id] = create_dag(daily_id,
                                  GCS_CONN_ID,
                                  GCS_BUCKET,
                                  {'start_date': datetime(2021, 1, 1),
-                                  'end_date': datetime(2021, 1, 5),
-                                  'retries': 2,
+                                  'end_date': datetime(2021, 1, 1),
+                                  'retries': 0,
                                   'retry_delay': timedelta(minutes=5),
                                   'email': [],
                                   'email_on_failure': True},
-                                 catchup=True)
+                                 catchup=False)
+                                 #catchup=True)
