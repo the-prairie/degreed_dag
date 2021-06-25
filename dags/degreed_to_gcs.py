@@ -58,7 +58,7 @@ default_args = {
     "start_date": "2020-01-01 00:00:00",
 }
 
-daily_id = '{}_to_bigqury_daily_backfill'.format(DEGREED_CONN_ID)
+daily_id = '{}_to_bigquery_daily_backfill'.format(DEGREED_CONN_ID)
 
 def create_dag(dag_id,
             schedule,
