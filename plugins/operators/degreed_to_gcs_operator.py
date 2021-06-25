@@ -80,18 +80,20 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
             raise Exception('Specified Degreed object not currently supported.')
 
     def execute(self, context):
-        self.token = (DegreedHook(http_conn_id=self.degreed_conn_id)
-                        .run(self.methodMapper('auth'))
-                        .json())['access_token']
+        h = DegreedHook(self.degreed_conn_id)
+        print(h.text)
+        # self.token = (DegreedHook(http_conn_id=self.degreed_conn_id)
+        #                 .run(self.methodMapper('auth'))
+        #                 .json())['access_token']
         
-        print(self.token)
+        # print(self.token)
 
 
     def methodMapper(self, endpoint):
         """
         This method maps the desired object to the relevant endpoint.
         """
-        mapping = {"auth": "degreed.com/oauth/token",
+        mapping = {"users": "api.degreed.com/api/v2/users",
                    "logins": "api.degreed.com/api/v2/logins"
                    }
 
