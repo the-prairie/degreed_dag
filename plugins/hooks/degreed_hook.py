@@ -29,7 +29,7 @@ class DegreedHook(HttpHook):
         session = requests_oauthlib.OAuth2Session(client=client)
 
         # inject token to the session
-        assert self.token_url
+    
         session.fetch_token(
             token_url=self.token_url,
             client_id=conn.login,
