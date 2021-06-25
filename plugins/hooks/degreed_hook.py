@@ -12,8 +12,8 @@ class DegreedHook(HttpHook):
     Add OAuth support to the basic HttpHook
     """
 
-    def __init__(self, token_url="https://degreed.com/oauth/token", *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, degreed_conn_id, token_url="https://degreed.com/oauth/token", *args, **kwargs) -> None:
+        super().__init__(http_conn_id=degreed_conn_id, *args, **kwargs)
         self.token_url = token_url
 
     # headers may be passed through directly or in the "extra" field in the connection
