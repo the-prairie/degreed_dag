@@ -91,7 +91,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
 
     def methodMapper(self, endpoint):
         """
-        This method maps the desired object to the relevant endpoint.
+        This method maps the desired object to the relevant endpoint
         """
         mapping = {"users": "api.degreed.com/api/v2/users",
                    "logins": "api.degreed.com/api/v2/logins"
