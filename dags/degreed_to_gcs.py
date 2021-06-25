@@ -140,5 +140,5 @@ globals()[daily_id] = create_dag(daily_id,
                                   'retry_delay': timedelta(minutes=5),
                                   'email': [],
                                   'email_on_failure': True},
-                                 #catchup=False)
-                                 catchup=True)
+                                 catchup=False)
+                                 #catchup=True)
