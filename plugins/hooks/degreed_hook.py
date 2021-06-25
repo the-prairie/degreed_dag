@@ -7,7 +7,7 @@ class DegreedHook(HttpHook):
      """
     def __init__(self, method='POST', http_conn_id='degreed_default'):
         self.connection = self.get_connection(http_conn_id)
-        self.extra_options['verify'] = True        
+              
         self.CLIENT_ID = self.connection.extra_dejson.get('client_id')
         self.CLIENT_SECRET = self.connection.extra_dejson.get('client_secret')
         super().__init__(method, http_conn_id)
@@ -19,7 +19,7 @@ class DegreedHook(HttpHook):
             extra_options=None,
             token=None):
         self.endpoint = endpoint
-
+        self.extra_options['verify'] = True 
         if endpoint == 'degreed.com/oauth/token':
             data = {"grant_type": "client_credentials",
                     "client_id": f"{self.CLIENT_ID}",
