@@ -78,6 +78,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
 
     def execute(self, context):
         h = DegreedHook()   
+
         return h.session_headers
 
 
@@ -86,11 +87,61 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
         """
         This method maps the desired object to the relevant endpoint.
         """
-        mapping = {"users": "api.degreed.com/api/v2/users",
-                   "logins": "api.degreed.com/api/v2/logins"
+        mapping = {"users": "https://api.degreed.com/api/v2/users",
+                   "logins": "https://api.degreed.com/api/v2/logins"
                    }
 
         return mapping[endpoint]
+
+    def retrieve_data(self,
+                      h,
+                      context,
+                      endpoint=None):
+        if endpoint is None:
+            logging.info('Endpoint is None..')
+        
+        return self.paginate_data(h,
+                                  endpoint,
+                                  context)
+
+                                  #company_id=company_id,
+                                  #campaign_id=campaign_id)
+    
+    def paginate_data(self,
+                      h,
+                      context,
+                      endpoint):
+
+        """
+        This method takes care of request building and pagination.
+        It retrieves 1000 at a time and continues to make
+        subsequent requests until last link.
+        """
+        output = []
+        final_payload = {'limit': 1000}
+        
+        if self.endpoint in ('users'):
+            final_payload['start_date'] = None
+            final_payload['end_date'] = None
+        
+        elif self.endpoing in ('logins'):
+            final_payload['start_date'] = context['ti'].execution_date
+            final_payload['end_date'] = context['ti'].execution_date
+        
+        url = methodMapper(self.endpoint)
+
+        return requests.get(url=url, params=urlencode(final_payload) , headers=h)
+        
+        
+
+        
+        
+
+
+
+        
+
+
 
     #     if self.endpoint == 'logins':
     #         paging_token = self.paginate_data(endpoint='paging_token',
