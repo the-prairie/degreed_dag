@@ -68,7 +68,7 @@ class DegreedHook:
             )
     
     def run(self, endpoint, data=None, headers=None):
-        headers = self.session_headers()
+        headers = self.session_headers
         
         return requests.get(url=endpoint, data=data, headers=headers)
 
