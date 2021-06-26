@@ -66,3 +66,9 @@ class DegreedHook:
                 client_secret=self.client_secret,
                 scope = 'xapi:read users:read logins:read pathways:read completions:read views:read skill_plans:read shared_items:read'
             )
+    
+    def run(self, endpoint, data=None, headers=None):
+        headers = self.session_headers()
+        
+        return requests.get(url=endpoint, data=data, headers=headers)
+

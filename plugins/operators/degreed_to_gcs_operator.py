@@ -124,7 +124,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
         
         url = self.methodMapper(self.endpoint)
 
-        return requests.get(url=url, params=urlencode(final_payload) , headers=h)
+        return h.run(url=url, params=urlencode(final_payload))
     
     def methodMapper(self, endpoint):
         """
