@@ -133,6 +133,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
         url = self.methodMapper(self.endpoint)
         
         logging.info('FINAL PAYLOAD: ' + str(final_payload))
+        logging.info('ENDPOINT: ' + str(url))
         response_body = h.run(endpoint=url, data=urlencode(final_payload)).json()
         if not response_body:
             logging.info('Resource Unavailable.')
