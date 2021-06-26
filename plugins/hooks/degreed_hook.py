@@ -1,49 +1,51 @@
+from airflow.hooks.http_hook import HttpHook
+from typing import Any, Dict, Optional
 
-
-from airflow.models import Variable
-from airflow.exceptions import AirflowException
-
-import oauthlib.oauth2 as oauth2
+from oauthlib.oauth2 import BackendApplicationClient
+from requests_oauthlib import OAuth2Session
 import requests
-import requests_oauthlib
 
+OptionalDictAny = Optional[Dict[str, Any]]
 
-class DegreedHook:
+class DegreedHook(HttpHook):
     """
-    
+    Add OAuth support to the basic HttpHook
     """
 
-    def __init__(self):
+    def __init__(self, degreed_conn_id, token_url="https://degreed.com/oauth/token"):
+        super().__init__(http_conn_id=degreed_conn_id)
+        self.token_url = token_url
+ 
+    # headers may be passed through directly or in the "extra" field in the connection
+    # definition
 
-        self.client_id = Variable.get('client_id')
-        self.client_secret = Variable.get('client_secret')
-        self.token_url = "https://degreed.com/oauth/token"
+    def get_conn(self, headers: OptionalDictAny = None):
+        conn = self.get_connection(self.http_conn_id)
 
+        # login and password are required
+        assert conn.login and conn.password
 
-    def get_conn(self):
-        
-
-        client = oauth2.BackendApplicationClient(client_id=self.client_id)
-        session = requests_oauthlib.OAuth2Session(client=client)
-        token = session.fetch_token(
+        oauth_client = BackendApplicationClient(client_id=conn.login)
+        with OAuth2Session(client=oauth_client) as oauth_session:
+            return oauth_session.fetch_token(
                 token_url=self.token_url,
-                client_id=self.client_id,
-                client_secret=self.client_secret,
+                client_id=conn.login,
+                client_secret=conn.password,
                 scope = 'users:read logins:read pathways:read completions:read views:read required-learning:read',
-
+                include_client_id=True
             )
 
-        headers = {'Authorization': 'Bearer {}'.format(token['access_token'])}
-        return headers
 
-    # def run_request(self,
-    #                 endpoint,
-    #                 payload=None):
-         
-    #      headers = self.get_conn()
-    #      #response = requests.get(url=endpoint, params=payload , headers=headers)
 
-    #      return headers
+    
+    def run_request(self,
+            endpoint,
+            payload=None):
+
+         headers = {'Authorization': 'Bearer {}'.format(self.get_conn()['access_token'])}
+         response = requests.get(url=endpoint, params=payload , headers=headers)
+
+         return response.reason
 
 
          
