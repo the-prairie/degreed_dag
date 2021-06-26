@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 from airflow.utils.decorators import apply_defaults
 from airflow.models import BaseOperator, SkipMixin
 from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
+from plugins.gcs_prefix_sensor.operators.google_cloud_storage_prefix_sensor import GoogleCloudStoragePrefixSensor
+from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
 
 
 from hooks.degreed_hook import DegreedHook
@@ -83,8 +85,13 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
         output = self.retrieve_data(h,
                                     context,
                                     self.endpoint)
+        
+        self.outputManager(context, 
+                           output,
+                           self.gcs_key,
+                           self.gcs_bucket
+                           )
 
-        return output
 
 
 
@@ -124,9 +131,46 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
             final_payload['end_date'] = self.end_at #context['ti'].execution_date
         
         url = self.methodMapper(self.endpoint)
+        
+        logging.info('FINAL PAYLOAD: ' + str(final_payload))
+        response_body = h.run(endpoint=url, data=urlencode(final_payload)).json()
+        if not response_body:
+            logging.info('Resource Unavailable.')
+            return ''
+        
+        while 'next' in response_body.get('links', {}):
+            time.sleep(1)
+            output.extend(response_body.get('data'))
+            response = h.run(response_body.get('links')['next'])
+            response.raise_for_status()
+            response_body = response.json()
 
-        return h.run(endpoint=url, data=urlencode(final_payload))
+        output.extend(response_body.get('data'))
+
+        
+        
+        return output
     
+    def outputManager(self, context, output, key, bucket):
+        if len(output) == 0 or output is None:
+            logging.info('No records pulled.')
+
+        else:
+            logging.info('Logging {0} to GCS..'.format(self.gcs_key))
+
+
+            ouput = pd.DataFrame([flatten(x) for x in output])
+
+            output.to_csv('{0}.csv'.format(key), index=False)
+
+            gcs_hook = GoogleCloudStorageHook(google_cloud_storage_conn_id=gcs_conn_id)
+            gcs_hook.upload(bucket=self.gcs_bucket,
+                            object='{0}.csv'.format(self.gcs_key),
+                            filename='{0}.csv'.format(self.gcs_key),
+                            mime_type='text/plain')
+
+
+
     def methodMapper(self, endpoint):
         """
         This method maps the desired object to the relevant endpoint.
