@@ -81,7 +81,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
 
         output = self.retrieve_data(h,
                                     context,
-                                    endpoint)
+                                    self.endpoint)
 
         return output
 
@@ -128,7 +128,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
             final_payload['start_date'] = None
             final_payload['end_date'] = None
         
-        elif self.endpoing in ('logins'):
+        elif self.endpoint in ('logins'):
             final_payload['start_date'] = context['ti'].execution_date
             final_payload['end_date'] = context['ti'].execution_date
         
