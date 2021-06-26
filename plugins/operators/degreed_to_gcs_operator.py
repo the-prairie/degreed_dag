@@ -78,7 +78,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
 
     def execute(self, context):
         h = DegreedHook()   
-        return h.session_headers()
+        return h.session_headers
 
 
 

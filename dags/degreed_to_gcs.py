@@ -8,7 +8,6 @@ from airflow.operators.dummy_operator import DummyOperator
 
 from operators.degreed_to_gcs_operator import DegreedToCloudStorageOperator
 
-#DEGREED_CONN_ID = 'degreed_default'
 DEGREED_SCHEMA = ''
 BIGQUERY_SCHEMA = 'degreed'
 BIGQUERY_CONN_ID = 'google_cloud_default'
