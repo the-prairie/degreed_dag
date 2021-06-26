@@ -36,14 +36,14 @@ class DegreedHook:
         headers = {'Authorization': 'Bearer {}'.format(token['access_token'])}
         return headers
 
-    def run_request(self,
-                    endpoint,
-                    payload=None):
+    # def run_request(self,
+    #                 endpoint,
+    #                 payload=None):
          
-         headers = self.get_conn()
-         #response = requests.get(url=endpoint, params=payload , headers=headers)
+    #      headers = self.get_conn()
+    #      #response = requests.get(url=endpoint, params=payload , headers=headers)
 
-         return headers
+    #      return headers
 
 
          

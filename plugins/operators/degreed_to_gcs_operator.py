@@ -81,12 +81,15 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
 
     def execute(self, context):
         h = DegreedHook()
-        print(h.run_request(endpoint=self.methodMapper('users')))
+
+        print(h.get_conn())
+        #print(h.run_request(endpoint=self.methodMapper('users')))
         # self.token = (DegreedHook(http_conn_id=self.degreed_conn_id)
         #                 .run(self.methodMapper('auth'))
         #                 .json())['access_token']
         
         # print(self.token)
+        logging.info('Headers {0}').format(h.get_conn())
 
 
     def methodMapper(self, endpoint):
