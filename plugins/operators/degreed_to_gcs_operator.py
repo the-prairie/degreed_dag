@@ -14,8 +14,7 @@ from hooks.degreed_hook import DegreedHook
 class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
     """
     Github To Cloud Storage Operator
-    :param degreed_conn_id:          The Degreed connection id.
-    :type github_conn_id:            string
+    
     :param degreed_object:            The desired Github object. The currently
                                      supported values are:
                                         - logins
@@ -48,7 +47,6 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
 
 
     def __init__(self,
-                 degreed_conn_id,
                  endpoint,
                  gcs_conn_id,
                  gcs_bucket,
@@ -60,7 +58,6 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
                  *args,
                  **kwargs):
         super().__init__(*args, **kwargs)
-        self.degreed_conn_id = degreed_conn_id
         self.endpoint = endpoint.lower()
         self.gcs_conn_id = gcs_conn_id
         self.gcs_bucket = gcs_bucket
@@ -80,13 +77,9 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
             raise Exception('Specified Degreed object not currently supported.')
 
     def execute(self, context):
-        h = DegreedHook(self.degreed_conn_id)   
-        h.run_request(self.methodMapper('users'))
-        # self.token = (DegreedHook(http_conn_id=self.degreed_conn_id)
-        #                 .run(self.methodMapper('auth'))
-        #                 .json())['access_token']
-        
-        # print(self.token)
+        h = DegreedHook()   
+        return h.session_headers()
+
 
 
     def methodMapper(self, endpoint):
