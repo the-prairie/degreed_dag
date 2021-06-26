@@ -48,7 +48,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
 
 
     def __init__(self,
-                 degreed_conn_id,
+                 #degreed_conn_id,
                  endpoint,
                  gcs_conn_id,
                  gcs_bucket,
@@ -60,7 +60,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
                  *args,
                  **kwargs):
         super().__init__(*args, **kwargs)
-        self.degreed_conn_id = degreed_conn_id
+        #self.degreed_conn_id = degreed_conn_id
         self.endpoint = endpoint.lower()
         self.gcs_conn_id = gcs_conn_id
         self.gcs_bucket = gcs_bucket
@@ -80,7 +80,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
             raise Exception('Specified Degreed object not currently supported.')
 
     def execute(self, context):
-        h = DegreedHook(self.degreed_conn_id)
+        h = DegreedHook()
         print(h.run_request(endpoint=self.methodMapper('users')))
         # self.token = (DegreedHook(http_conn_id=self.degreed_conn_id)
         #                 .run(self.methodMapper('auth'))
@@ -93,8 +93,8 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
         """
         This method maps the desired object to the relevant endpoint
         """
-        mapping = {"users": "api.degreed.com/api/v2/users",
-                   "logins": "api.degreed.com/api/v2/logins"
+        mapping = {"users": "https://api.degreed.com/api/v2/users",
+                   "logins": "https://api.degreed.com/api/v2/logins"
                    }
 
         return mapping[endpoint]

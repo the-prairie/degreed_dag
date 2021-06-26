@@ -1,46 +1,44 @@
-from airflow.hooks.http_hook import HttpHook
-from typing import Any, Dict, Optional
+
+
+from airflow.models import Variable
+from airflow.exceptions import AirflowException
 
 import oauthlib.oauth2 as oauth2
 import requests
 import requests_oauthlib
 
-OptionalDictAny = Optional[Dict[str, Any]]
 
-class DegreedHook(HttpHook):
+class DegreedHook:
     """
-    Add OAuth support to the basic HttpHook
+    
     """
 
-    def __init__(self, degreed_conn_id, token_url="https://degreed.com/oauth/token"):
-        super().__init__(http_conn_id=degreed_conn_id)
-        self.token_url = token_url
- 
-    # headers may be passed through directly or in the "extra" field in the connection
-    # definition
+    def __init__(self):
 
-    def get_conn(self, headers: OptionalDictAny = None):
-        conn = self.get_connection(self.http_conn_id)
+        self.client_id = Variable.get('client_id')
+        self.client_secret = Variable.get('client_secret')
+        self.token_url = "https://degreed.com/oauth/token"
 
-        # login and password are required
-        assert conn.login and conn.password
 
-        client = oauth2.BackendApplicationClient(client_id=conn.login)
+    def get_conn(self, headers):
+        
+
+        client = oauth2.BackendApplicationClient(client_id=self.client_id)
         session = requests_oauthlib.OAuth2Session(client=client)
         token = session.fetch_token(
                 token_url=self.token_url,
-                client_id=conn.login,
-                client_secret=conn.password,
+                client_id=self.client_id,
+                client_secret=self.client_secret,
                 scope = 'users:read logins:read pathways:read completions:read views:read required-learning:read',
-                include_client_id=True
+
             )
 
         headers = {'Authorization': 'Bearer {}'.format(token['access_token'])}
         return headers
 
     def run_request(self,
-            endpoint,
-            payload=None):
+                    endpoint,
+                    payload=None):
          
          headers = self.get_conn()
          response = requests.get(url=endpoint, params=payload , headers=headers)
