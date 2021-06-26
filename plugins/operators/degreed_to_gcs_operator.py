@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from airflow.utils.decorators import apply_defaults
 from airflow.models import BaseOperator, SkipMixin
 from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
-from plugins.gcs_prefix_sensor.operators.google_cloud_storage_prefix_sensor import GoogleCloudStoragePrefixSensor
+from airflow.contrib.sensors.gcs_sensor import GoogleCloudStoragePrefixSensor
 from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
 
 
