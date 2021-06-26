@@ -12,7 +12,7 @@ DEGREED_SCHEMA = ''
 BIGQUERY_SCHEMA = 'degreed'
 BIGQUERY_CONN_ID = 'google_cloud_default'
 GCS_CONN_ID = 'google_cloud_default'
-GCS_BUCKET = 'degreed_data/logins'
+GCS_BUCKET = 'us-central1-degreed-load-62d650f0-bucket/data/logins'
 
 user_schema = {"name": "users",
              "type": "record",
