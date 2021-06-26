@@ -19,7 +19,7 @@ class DegreedHook(HttpHook):
     # headers may be passed through directly or in the "extra" field in the connection
     # definition
 
-    def get_conn(self, headers: OptionalDictAny = None):
+    def get_conn(self):
         conn = self.get_connection(self.http_conn_id)
 
         # login and password are required
@@ -31,8 +31,7 @@ class DegreedHook(HttpHook):
                 token_url=self.token_url,
                 client_id=conn.login,
                 client_secret=conn.password,
-                scope = 'users:read logins:read pathways:read completions:read views:read required-learning:read',
-                include_client_id=True
+                scope = 'users:read logins:read pathways:read completions:read views:read required-learning:read'
             )
 
 
@@ -43,9 +42,9 @@ class DegreedHook(HttpHook):
             payload=None):
 
          headers = {'Authorization': 'Bearer {}'.format(self.get_conn()['access_token'])}
-         response = requests.get(url=endpoint, params=payload , headers=headers)
+         #response = requests.get(url=endpoint, params=payload , headers=headers)
 
-         return response.reason
+         return headers
 
 
          
