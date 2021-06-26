@@ -5,11 +5,10 @@ from requests_oauthlib import OAuth2Session
 import requests
 from airflow.models import Variable
 
-CLIENT_ID = 'a682964b65a8bf12'
-CLIENT_SECRET = 'dbdfccf3709f0f696fde111b6761bcdb'
 
-#CLIENT_ID = Variable.get('client_id')
-#CLIENT_SECRET = Variable.get('client_secret')
+
+CLIENT_ID = Variable.get('client_id')
+CLIENT_SECRET = Variable.get('client_secret')
 
 
 class DegreedHook:
