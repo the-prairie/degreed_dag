@@ -20,7 +20,7 @@ class DegreedHook:
         self.token_url = "https://degreed.com/oauth/token"
 
 
-    def get_conn(self, headers):
+    def get_conn(self):
         
 
         client = oauth2.BackendApplicationClient(client_id=self.client_id)
