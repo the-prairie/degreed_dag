@@ -129,11 +129,11 @@ globals()[daily_id] = create_dag(daily_id,
                                  BIGQUERY_SCHEMA,
                                  GCS_CONN_ID,
                                  GCS_BUCKET,
-                                 {'start_date': datetime(2021, 6, 23),
-                                  'end_date': datetime(2021, 6, 29),
+                                 {'start_date': datetime(2021, 6, 1),
+                                  'end_date': datetime(2021, 6, 25),
                                   'retries': 0,
                                   'retry_delay': timedelta(minutes=5),
                                   'email': [],
                                   'email_on_failure': True},
-                                 catchup=False)
-                                 #catchup=True)
+                                 catchup=True)
+                                
