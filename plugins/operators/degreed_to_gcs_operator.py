@@ -87,16 +87,6 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
 
 
 
-    def methodMapper(self, endpoint):
-        """
-        This method maps the desired object to the relevant endpoint.
-        """
-        mapping = {"users": "https://api.degreed.com/api/v2/users",
-                   "logins": "https://api.degreed.com/api/v2/logins"
-                   }
-
-        return mapping[endpoint]
-
     def retrieve_data(self,
                       h,
                       context,
@@ -132,10 +122,19 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
             final_payload['start_date'] = self.start_at #context['ti'].execution_date
             final_payload['end_date'] = self.end_at #context['ti'].execution_date
         
-        url = methodMapper(self.endpoint)
+        url = self.methodMapper(self.endpoint)
 
         return requests.get(url=url, params=urlencode(final_payload) , headers=h)
-        
+    
+    def methodMapper(self, endpoint):
+        """
+        This method maps the desired object to the relevant endpoint.
+        """
+        mapping = {"users": "https://api.degreed.com/api/v2/users",
+                   "logins": "https://api.degreed.com/api/v2/logins"
+                   }
+
+        return mapping[endpoint]
         
 
         
