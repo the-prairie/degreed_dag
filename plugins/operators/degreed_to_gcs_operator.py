@@ -135,7 +135,7 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
         logging.info('FINAL PAYLOAD: ' + str(final_payload))
         logging.info('ENDPOINT: ' + str(url))
         response_body = h.run(endpoint=url, data=urlencode(final_payload)).json()
-        logging.info(response_body.response)
+        logging.info(response_body.keys())
         if not response_body:
             logging.info('Resource Unavailable.')
             return ''
