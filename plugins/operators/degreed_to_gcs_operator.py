@@ -123,12 +123,12 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
         final_payload = {'limit': 1000}
         
         if self.endpoint in ('users'):
-            final_payload['start_date'] = None
-            final_payload['end_date'] = None
+            final_payload['filter[start_date]'] = None
+            final_payload['filter[end_date]'] = None
         
         elif self.endpoint in ('logins'):
-            final_payload['start_date'] = self.start_at #context['ti'].execution_date
-            final_payload['end_date'] = self.end_at #context['ti'].execution_date
+            final_payload['filter[start_date]'] = self.start_at #context['ti'].execution_date
+            final_payload['filter[end_date]'] = self.end_at #context['ti'].execution_date
         
         url = self.methodMapper(self.endpoint)
         

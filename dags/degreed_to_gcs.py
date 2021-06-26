@@ -103,8 +103,8 @@ def create_dag(dag_id,
 
             DEGREED_TASK_ID = 'get_{0}_degreed_data'.format(endpoint)
             BIGQUERY_TASK_ID = 'degreed_{0}_to_bigquery'.format(endpoint)
-            START_AT = "{{ execution_date.isoformat() }}"
-            END_AT = "{{ next_execution_date.isoformat() }}"
+            START_AT = "{{ ds }}"
+            END_AT = "{{ next_ds }}"
 
 
 
