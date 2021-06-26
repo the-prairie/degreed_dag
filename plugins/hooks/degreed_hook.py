@@ -41,9 +41,9 @@ class DegreedHook:
                     payload=None):
          
          headers = self.get_conn()
-         response = requests.get(url=endpoint, params=payload , headers=headers)
+         #response = requests.get(url=endpoint, params=payload , headers=headers)
 
-         return response.reason
+         return headers
 
 
          
