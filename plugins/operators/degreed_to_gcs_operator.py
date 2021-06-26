@@ -77,9 +77,13 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
             raise Exception('Specified Degreed object not currently supported.')
 
     def execute(self, context):
-        h = DegreedHook()   
+        h = DegreedHook()
 
-        return h.session_headers
+        output = self.retrieve_data(h,
+                                    context,
+                                    endpoint)
+
+        return output
 
 
 
