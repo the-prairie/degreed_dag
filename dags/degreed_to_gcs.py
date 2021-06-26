@@ -114,7 +114,7 @@ def create_dag(dag_id,
                                                 gcs_conn_id=gcs_conn_id,
                                                 gcs_bucket=gcs_bucket,
                                                 gcs_key=GCS_KEY,
-                                                output_format='json',
+                                                output_format='csv',
                                                 start_at=START_AT,
                                                 end_at=END_AT)
         

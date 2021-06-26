@@ -1,12 +1,15 @@
 import time
+import os
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 import requests
 from airflow.models import Variable
 
+CLIENT_ID = 'a682964b65a8bf12'
+CLIENT_SECRET = 'dbdfccf3709f0f696fde111b6761bcdb'
 
-CLIENT_ID = Variable.get('client_id')
-CLIENT_SECRET = Variable.get('client_secret')
+#CLIENT_ID = Variable.get('client_id')
+#CLIENT_SECRET = Variable.get('client_secret')
 
 
 class DegreedHook:
@@ -67,8 +70,8 @@ class DegreedHook:
                 scope = 'xapi:read users:read logins:read pathways:read completions:read views:read skill_plans:read shared_items:read'
             )
     
-    def run(self, endpoint, data=None, headers=None):
+    def run(self, endpoint, params=None, headers=None):
         headers = self.session_headers
         
-        return requests.get(url=endpoint, data=data, headers=headers)
+        return requests.get(url=endpoint, params=params, headers=headers)
 

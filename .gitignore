@@ -1,1 +1,6 @@
 service_account.json
+degreed_to_gcs_operator_v1.py
+
+get_users.ipynb
+.env
+.pyc
