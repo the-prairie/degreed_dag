@@ -8,7 +8,7 @@ from airflow.operators.dummy_operator import DummyOperator
 
 from operators.degreed_to_gcs_operator import DegreedToCloudStorageOperator
 
-DEGREED_CONN_ID = 'degreed_default'
+#DEGREED_CONN_ID = 'degreed_default'
 DEGREED_SCHEMA = ''
 BIGQUERY_SCHEMA = 'degreed'
 BIGQUERY_CONN_ID = 'google_cloud_default'
@@ -58,11 +58,10 @@ default_args = {
     "start_date": "2020-01-01 00:00:00",
 }
 
-daily_id = '{}_to_bigquery_daily_backfill'.format(DEGREED_CONN_ID)
+daily_id = '{}_to_bigquery_daily_backfill'.format(BIGQUERY_SCHEMA)
 
 def create_dag(dag_id,
             schedule,
-            degreed_conn_id,
             bigquery_conn_id,
             bigquery_schema,
             gcs_conn_id,
@@ -87,8 +86,7 @@ def create_dag(dag_id,
     TASK_PARAMS_DICT = {
         "dataset_id": "degreed",
         "project_id": "its-my-data-pipeline",
-        "gcp_conn_id": "google_cloud_default",
-        "degreed_conn_id": "degreed_default"
+        "gcp_conn_id": "google_cloud_default"
     }
 
     with dag:
@@ -113,7 +111,6 @@ def create_dag(dag_id,
 
 
         dg = DegreedToCloudStorageOperator(task_id=DEGREED_TASK_ID,
-                                                degreed_conn_id=degreed_conn_id,
                                                 endpoint=endpoint,
                                                 gcs_conn_id=gcs_conn_id,
                                                 gcs_bucket=gcs_bucket,
@@ -129,7 +126,6 @@ def create_dag(dag_id,
 
 globals()[daily_id] = create_dag(daily_id,
                                  '@daily',
-                                 DEGREED_CONN_ID,
                                  BIGQUERY_CONN_ID,
                                  BIGQUERY_SCHEMA,
                                  GCS_CONN_ID,

@@ -1,191 +1,68 @@
-from airflow.hooks.http_hook import HttpHook
-from typing import Any, Dict, Optional
-
+import time
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 import requests
+from airflow.models import Variable
 
-OptionalDictAny = Optional[Dict[str, Any]]
 
-class DegreedHook(HttpHook):
-    """
-    Add OAuth support to the basic HttpHook
-    """
+CLIENT_ID = Variable.get('client_id')
+CLIENT_SECRET = Variable.get('client_secret')
 
-    def __init__(self, degreed_conn_id, token_url="https://degreed.com/oauth/token"):
-        super().__init__(http_conn_id=degreed_conn_id)
-        self.token_url = token_url
+
+class DegreedHook:
+    
+    SECONDS_BEFORE_EXPIRY = 60
+    
+    def __init__(self):
+        self.token_url = 'https://degreed.com/oauth/token'
+        self.client_id = CLIENT_ID
+        self.client_secret = CLIENT_SECRET
+
+
+        if not (self.client_id and self.client_secret):
+            raise ValueError("Parameters 'client_id' and 'client_secret' have to be set in order "
+                             "to authenticate with Degreed API service")
+
+        self._token = None
+        _ = self.token
  
-    # headers may be passed through directly or in the "extra" field in the connection
-    # definition
 
-    def get_conn(self):
-        conn = self.get_connection(self.http_conn_id)
+    @property
+    def token(self):
+        """ Always up-to-date session's token
+        :return: A token in a form of dictionary of parameters
+        :rtype: dict
+        """
+        if self._token and self._token['expires_at'] > time.time() + self.SECONDS_BEFORE_EXPIRY:
+            return self._token
 
-        # login and password are required
-        assert conn.login and conn.password
+        # A request parameter is created only in order for error handling decorators to work correctly
+        request = self.token_url
+        self._token = self._fetch_token(request)
 
-        oauth_client = BackendApplicationClient(client_id=conn.login)
+        return self._token
+
+    @property
+    def session_headers(self):
+        """ Provides session authorization headers
+        :return: A dictionary with authorization headers
+        :rtype: dict
+        """
+        return {
+            'Authorization': 'Bearer {}'.format(self.token['access_token'])
+        }
+    
+
+    def _fetch_token(self, request):
+        """ Collects a new token from Degreed API service
+        """
+
+        oauth_client = BackendApplicationClient(client_id=self.client_id)
+
         with OAuth2Session(client=oauth_client) as oauth_session:
             return oauth_session.fetch_token(
-                token_url=self.token_url,
-                client_id=conn.login,
-                client_secret=conn.password,
-                scope = 'users:read logins:read pathways:read completions:read views:read required-learning:read'
+                token_url=request,
+                client_id=self.client_id,
+                client_secret=self.client_secret,
+                scope = 'xapi:read users:read logins:read pathways:read completions:read views:read skill_plans:read shared_items:read'
             )
-
-
-
-    
-    def run_request(self,
-            endpoint,
-            payload=None):
-
-         headers = {'Authorization': 'Bearer {}'.format(self.get_conn()['access_token'])}
-         #response = requests.get(url=endpoint, params=payload , headers=headers)
-
-         return headers
-
-
-         
-         
-
-
-
-
-
-
-# class DegreedHook(HttpHook):
-#     """
-#      Add OAuth support to the basic HttpHook
-#      """
-#     def __init__(self, method='POST', http_conn_id='degreed_default'):
-#         self.connection = self.get_connection(http_conn_id)
-    
-#         self.CLIENT_ID = self.connection.extra_dejson.get('client_id')
-#         self.CLIENT_SECRET = self.connection.extra_dejson.get('client_secret')
-#         super().__init__(method, http_conn_id)
-
-#     def run(self,
-#             endpoint,
-#             data=None,
-#             headers=None,
-#             extra_options=None,
-#             token=None):
-#         self.endpoint = endpoint
-
-#         if endpoint == 'degreed.com/oauth/token':
-#             data = {"grant_type": "client_credentials",
-#                     "client_id": f"{self.CLIENT_ID}",
-#                     "client_secret": f"{self.CLIENT_SECRET}",
-#                     "scope": "users:read logins:read pathways:read completions:read views:read required-learning:read"
-#                     }
-#             method = 'POST'
-#             endpoint = None
-#         else:
-#             headers = {"Authorization": "Bearer {0}".format(token),
-#                        "Content-Type": "application/json"}
-#             method = 'GET'
-#         return super().run(endpoint, data, headers, extra_options)
-
-
-
-
-
-
-
-# from typing import Any, Dict, Optional
-
-# import oauthlib.oauth2 as oauth2
-# import requests
-# import requests_oauthlib
-# from airflow.hooks.http_hook import HttpHook
-
-# OptionalDictAny = Optional[Dict[str, Any]]
-
-
-# class DegreedHook(HttpHook):
-#     """
-#     Add OAuth support to the basic HttpHook
-#     """
-
-#     def __init__(self, token_url="https://degreed.com/oauth/token", *args, **kwargs) -> None:
-#         super().__init__(*args, **kwargs)
-#         self.token_url = token_url
-
-#     # headers may be passed through directly or in the "extra" field in the connection
-#     # definition
-
-#     def get_conn(self, headers: OptionalDictAny = None) -> requests_oauthlib.OAuth2Session:
-#         conn = self.get_connection(self.http_conn_id)
-
-#         # login and password are required
-#         assert conn.login and conn.password
-
-#         client = oauth2.BackendApplicationClient(client_id=conn.login)
-#         session = requests_oauthlib.OAuth2Session(client=client)
-
-#         # inject token to the session
-#         assert self.token_url
-#         session.fetch_token(
-#             token_url=self.token_url,
-#             client_id=conn.login,
-#             client_secret=conn.password,
-#             scope = 'users:read logins:read pathways:read completions:read views:read required-learning:read',
-#             include_client_id=True
-#         )
-#         if conn.host and "://" in conn.host:
-#             self.base_url = conn.host
-#         else:
-#             # schema defaults to HTTPS
-#             schema = conn.schema if conn.schema else "https"
-#             host = conn.host if conn.host else ""
-#             self.base_url = schema + "://" + host
-
-#         if conn.port:
-#             self.base_url = self.base_url + ":" + str(conn.port)
-
-#         if conn.extra:
-#             try:
-#                 session.headers.update(conn.extra_dejson)
-#             except TypeError:
-#                 self.log.warn('Connection to %s has invalid extra field.', conn.host)
-#         if headers:
-#             session.headers.update(headers)
-
-#         return session
-
-
-
-
-
-
-
-
-# # from airflow.hooks.http_hook import HttpHook
-
-
-# # class DegreedHook(HttpHook):
-
-# #     def __init__(self, method='GET', http_conn_id='http_default'):
-# #         self.connection = self.get_connection(http_conn_id)
-# #         self.CLIENT_ID = self.connection.extra_dejson.get('client_id')
-# #         self.CLIENT_SECRET = self.connection.extra_dejson.get('client_secret')
-# #         super().__init__(method, http_conn_id)
-
-# #     def run(self,
-# #             endpoint,
-# #             data=None,
-# #             headers=None,
-# #             extra_options=None,
-# #             token=None):
-# #         self.endpoint = endpoint
-
-# #         if endpoint == 'https://degreed.com/oauth/token':
-# #             data = {"grant_type": "client_credentials",
-# #                     "client_id": "{0}".format(self.CLIENT_ID),
-# #                     "client_secret": "{0}".format(self.CLIENT_SECRET)}
-# #         else:
-# #             headers = {"Authorization": "Bearer {0}".format(token),
-# #                        "Content-Type": "application/json"}
-# #         return super().run(endpoint, data, headers, extra_options)
