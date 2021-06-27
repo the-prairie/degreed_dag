@@ -98,7 +98,7 @@ def create_dag(dag_id,
             DEGREED_SCHEMA = user_schema
             TABLE_NAME = 'degreed_{0}'.format(endpoint)
 
-            GCS_KEY = 'degreed/{0}/{1}_{2}.json'.format(bigquery_schema,
+            GCS_KEY = 'degreed/{0}/{1}_{2}.csv'.format(bigquery_schema,
                                                        endpoint,
                                                        "{{ ts_nodash }}")
 
