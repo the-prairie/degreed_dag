@@ -13,7 +13,7 @@ DEGREED_SCHEMA = ''
 BIGQUERY_SCHEMA = 'degreed'
 BIGQUERY_CONN_ID = 'google_cloud_default'
 GCS_CONN_ID = 'google_cloud_default'
-GCS_BUCKET = 'us-central1-degreed-load-62d650f0-bucket/data/logins'
+GCS_BUCKET = 'degreed-data'
 
 user_schema = {"name": "users",
              "type": "record",
@@ -100,7 +100,7 @@ def create_dag(dag_id,
 
             GCS_KEY = 'degreed/{0}/{1}_{2}.csv'.format(bigquery_schema,
                                                        endpoint,
-                                                       "{{ ts_nodash }}")
+                                                       "{{ ds_nodash }}")
 
             DEGREED_TASK_ID = 'get_{0}_degreed_data'.format(endpoint)
             BIGQUERY_TASK_ID = 'degreed_{0}_to_bigquery'.format(endpoint)
