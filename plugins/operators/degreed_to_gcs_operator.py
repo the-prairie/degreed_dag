@@ -5,6 +5,7 @@ import json
 from datetime import datetime, timedelta
 from flatten_json import flatten
 import pandas as pd
+import time
 
 from airflow.utils.decorators import apply_defaults
 from airflow.models import BaseOperator, SkipMixin
@@ -99,15 +100,26 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
 
 
         
-        response_body = h.run(endpoint="{0}/{1}".format(base_url, self.endpoint), params=params).json()
+        response_data = h.run(endpoint="{0}/{1}".format(base_url, self.endpoint), params=params)
+        response_body = response_data.json()
+        response_headers = response_data.headers
         if not response_body:
             logging.info('Resource Unavailable.')
 
         while 'next' in response_body.get('links', {}):
             output.extend(response_body.get('data'))
-            response = h.run(response_body.get('links')['next'])
-            response.raise_for_status()
-            response_body = response.json()
+            if int(response_headers['X-Rate-Limit-Remaining']) <= 65:
+                response_data = h.run(response_body.get('links')['next'])
+                response_data.raise_for_status()
+                response_headers = response_data.headers
+                response_body = response_data.json()
+        
+            else:
+                time.sleep(60)
+                response_data = h.run(response_body.get('links')['next'])
+                response_data.raise_for_status()
+                response_headers = response_data.headers
+                response_body = response_data.json()
 
         output.extend(response_body.get('data'))
 

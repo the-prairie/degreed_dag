@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from airflow.contrib.operators.bigquery_operator import BigQueryGetDatasetOperator
 from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators import RateLimitOperator
 
 
 from operators.degreed_to_gcs_operator import DegreedToCloudStorageOperator
