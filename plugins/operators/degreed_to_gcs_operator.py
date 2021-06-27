@@ -125,14 +125,12 @@ class DegreedToCloudStorageOperator(BaseOperator, SkipMixin):
 
         df = pd.DataFrame([flatten(x) for x in output])
 
-        df.to_csv(self.gcs_key, index=False)
 
-        hook = GoogleCloudStorageHook(google_cloud_storage_conn_id=self.gcs_conn_id)
+        df.to_csv(path_or_buf = self.gcs_key, index=False)
+        
+        return f'wrote data to gcs {self.gcs_key}'
 
-        hook.upload(bucket=self.gcs_bucket,
-                object=self.gcs_key,
-                filename=self.gcs_key,
-                mime_type='text/plain')
+
 
 
 
