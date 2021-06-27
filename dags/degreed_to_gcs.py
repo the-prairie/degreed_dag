@@ -98,7 +98,7 @@ def create_dag(dag_id,
             DEGREED_SCHEMA = user_schema
             TABLE_NAME = 'degreed_{0}'.format(endpoint)
 
-            GCS_KEY = 'degreed-data/{0}/{0}_{1}.csv'.format(endpoint,
+            GCS_KEY = '{0}/{1}/{1}_{2}.csv'.format(gcs_bucket, endpoint,
                                                        "{{ ds_nodash }}")
 
             DEGREED_TASK_ID = 'get_{0}_degreed_data'.format(endpoint)
