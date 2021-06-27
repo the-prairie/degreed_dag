@@ -58,7 +58,8 @@ default_args = {
     "start_date": "2020-01-01 00:00:00",
 }
 
-daily_id = '{}_to_bigquery_daily_backfill'.format(BIGQUERY_SCHEMA)
+daily_backfill_id = '{}_to_bigquery_daily_backfill'.format(BIGQUERY_SCHEMA)
+daily_id = '{}_to_bigquery_daily'.format(BIGQUERY_SCHEMA)
 
 def create_dag(dag_id,
             schedule,
@@ -130,8 +131,21 @@ globals()[daily_id] = create_dag(daily_id,
                                  GCS_CONN_ID,
                                  GCS_BUCKET,
                                  {'start_date': datetime(2021, 6, 1),
-                                  #'end_date': datetime(2021, 6, 25),
-                                  'retries': 1,
+                                  'retries': 2,
+                                  'retry_delay': timedelta(minutes=1),
+                                  'email': [],
+                                  'email_on_failure': True},
+                                 catchup=False)
+
+globals()[daily_backfill_id] = create_dag(daily_backfill_id,
+                                 '@daily',
+                                 BIGQUERY_CONN_ID,
+                                 BIGQUERY_SCHEMA,
+                                 GCS_CONN_ID,
+                                 GCS_BUCKET,
+                                 {'start_date': datetime(2021, 6, 1),
+                                  'end_date': datetime(2021, 6, 26),
+                                  'retries': 2,
                                   'retry_delay': timedelta(minutes=1),
                                   'email': [],
                                   'email_on_failure': True},
